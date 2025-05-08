@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Focus Nest</string>
+    <string name="welcome_to_focus_nest">Welcome to Focus Nest!</string>
+    <string name="please_enter_your_name_below">Please enter your name below:</string>
+    <string name="name">Name</string>
+    <string name="next">Next</string>
+    <string name="start">Start</string>
+    <string name="reset">Reset</string>
+    <string name="_25_00">25:00</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="break_button">Break</string>
+    <string name="pomodoros_completed_0">Pomodoros completed: 0</string>
+
+</resources>
