@@ -5,15 +5,15 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
 
@@ -24,11 +24,10 @@ public class HomeActivity extends AppCompatActivity {
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
     private boolean isBreak = false;
+    private boolean isPaused = false;
     private int pomodoroCount = 0;
-    private boolean isPaused = false; // track pause state
 
-
-    private long timeLeftInMillis = 25 * 60 * 1000; // default to 25 mins
+    private long timeLeftInMillis = 25 * 60 * 1000; // 25 minutes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,124 +38,153 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
+        // UI setup
         timerText = findViewById(R.id.timer_text);
         pomodoroCountText = findViewById(R.id.pomodoro_count_text);
         startPauseButton = findViewById(R.id.start_pause_button);
         resetButton = findViewById(R.id.reset_button);
         breakButton = findViewById(R.id.break_button);
         skipButton = findViewById(R.id.skip_button);
+        // Get the extras
+        String name = getIntent().getStringExtra("user_name");
+        String profile = getIntent().getStringExtra("selected_profile");
 
-        startPauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isBreak) {
-                    if (timer != null)
-                        timer.cancel();
-                    isBreak = false;
-                    timeLeftInMillis = 25 * 60 * 1000;
-                    updateTimerText();
-                    startTimer();
-                    startPauseButton.setText("Pause");
-                    breakButton.setText("Break");
-                } else {
-                    if (isTimerRunning) {
-                        pauseTimer();
-                        startPauseButton.setText("Start");
-                    } else {
-                        startTimer();
-                        startPauseButton.setText("Pause");
-                    }
-                }
-            }
-        });
+        // Build welcome message
+        String welcomeMessage = "Hello " + name + "!\nYou have chosen the profile \"" + profile + "\".";
 
+        // Set to TextView
+        TextView welcomeText = findViewById(R.id.welcome_text); // Make sure this ID exists in XML
+        welcomeText.setText(welcomeMessage);
 
-        //resetButton.setOnClickListener(v -> resetTimer());
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // Initial button visibility
+        startPauseButton.setVisibility(View.VISIBLE);
+        resetButton.setVisibility(View.GONE);
+        skipButton.setVisibility(View.GONE);
+        breakButton.setVisibility(View.GONE);
+
+        startPauseButton.setOnClickListener(v -> {
+            if (isBreak) {
                 if (timer != null) timer.cancel();
                 isBreak = false;
-                isTimerRunning = false;
                 timeLeftInMillis = 25 * 60 * 1000;
                 updateTimerText();
-                startPauseButton.setText("Start");
+                startTimer();
+
+                startPauseButton.setText("Pause");
                 breakButton.setText("Break");
-            }
-        });
 
-        breakButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isBreak) {
-                    // Start a new break
-                    if (timer != null) timer.cancel();
-
-                    isBreak = true;
-                    isPaused = false;
-
-                    timeLeftInMillis = (pomodoroCount != 0 && pomodoroCount % 4 == 0)
-                            ? 15 * 60 * 1000
-                            : 5 * 60 * 1000;
-
-                    updateTimerText();
-                    startTimer();
-                    breakButton.setText("Pause Break");
-                    startPauseButton.setText("Pause");
+                startPauseButton.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.VISIBLE);
+                skipButton.setVisibility(View.VISIBLE);
+                breakButton.setVisibility(View.GONE);
+            } else {
+                if (isTimerRunning) {
+                    pauseTimer();
+                    startPauseButton.setText("Start");
                 } else {
-                    // Pause or Resume break
-                    if (isTimerRunning) {
-                        pauseTimer();
-                        breakButton.setText("Resume Break");
-                        isPaused = true;
-                    } else {
-                        startTimer();
-                        breakButton.setText("Pause Break");
-                        isPaused = false;
-                    }
+                    startTimer();
+                    startPauseButton.setText("Pause");
+
+                    // Show skip and reset buttons now
+                    resetButton.setVisibility(View.VISIBLE);
+                    skipButton.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isBreak) {
-                    // Don't skip during a break
-                    return;
-                }
+        resetButton.setOnClickListener(v -> {
+            if (timer != null) timer.cancel();
+            isTimerRunning = false;
+            isPaused = false;
+            isBreak = false;
 
+            timeLeftInMillis = 25 * 60 * 1000;
+            updateTimerText();
+
+            startPauseButton.setText("Start");
+
+            // Keep start, reset, skip visible
+            startPauseButton.setVisibility(View.VISIBLE);
+            resetButton.setVisibility(View.VISIBLE);
+            skipButton.setVisibility(View.VISIBLE);
+            breakButton.setVisibility(View.GONE);
+        });
+
+
+        breakButton.setOnClickListener(v -> {
+            if (!isBreak) {
                 if (timer != null) timer.cancel();
-
-                pomodoroCount++;
-                pomodoroCountText.setText("Pomodoros: " + pomodoroCount);
-
                 isBreak = true;
                 isPaused = false;
-
-                timeLeftInMillis = (pomodoroCount % 4 == 0)
-                        ? 15 * 60 * 1000
-                        : 5 * 60 * 1000;
+                timeLeftInMillis = (pomodoroCount != 0 && pomodoroCount % 4 == 0) ?
+                        15 * 60 * 1000 : 5 * 60 * 1000;
 
                 updateTimerText();
                 startTimer();
+
                 breakButton.setText("Pause Break");
                 startPauseButton.setText("Pause");
+
+                startPauseButton.setVisibility(View.GONE);
+                resetButton.setVisibility(View.GONE);
+                skipButton.setVisibility(View.GONE);
+                breakButton.setVisibility(View.VISIBLE);
+            } else {
+                if (isTimerRunning) {
+                    pauseTimer();
+                    breakButton.setText("Resume Break");
+                    isPaused = true;
+                } else {
+                    startTimer();
+                    breakButton.setText("Pause Break");
+                    isPaused = false;
+                }
             }
         });
 
+        skipButton.setOnClickListener(v -> {
+            if (isBreak) return;
 
-        String name = getSharedPreferences("FocusNestPrefs", MODE_PRIVATE)
-                .getString("user_name", "Guest");
+            if (timer != null) timer.cancel();
 
-        //TextView greeting = findViewById(R.id.greetingText);
-        //greeting.setText("Welcome, " + name + "!");
+            pomodoroCount++;
+            pomodoroCountText.setText("Pomodoros: " + pomodoroCount);
+
+            isBreak = true;
+            isPaused = false;
+            timeLeftInMillis = (pomodoroCount % 4 == 0) ? 15 * 60 * 1000 : 5 * 60 * 1000;
+
+            updateTimerText();
+            startTimer();
+
+            breakButton.setText("Pause Break");
+
+            resetButton.setVisibility(View.GONE);
+            skipButton.setVisibility(View.GONE);
+            startPauseButton.setVisibility(View.GONE);
+            breakButton.setVisibility(View.VISIBLE);
+        });
+
+        FloatingActionButton settingsButton = findViewById(R.id.settings_button);
+
+        settingsButton.setOnClickListener(v -> {
+            //temp
+            Toast.makeText(HomeActivity.this, "Settings clicked", Toast.LENGTH_SHORT).show();
+
+            // Start the SettingsActivity
+            // open settings screen
+            // Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+            // startActivity(intent);
+        });
+
     }
+
     private void startTimer() {
         timer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -174,13 +202,17 @@ public class HomeActivity extends AppCompatActivity {
                     pomodoroCountText.setText("Pomodoros: " + pomodoroCount);
                 }
 
-                // Reset to default 25 minutes after any session
                 isBreak = false;
                 timeLeftInMillis = 25 * 60 * 1000;
                 updateTimerText();
 
                 startPauseButton.setText("Start");
                 breakButton.setText("Break");
+
+                startPauseButton.setVisibility(View.VISIBLE);
+                resetButton.setVisibility(View.GONE);
+                skipButton.setVisibility(View.GONE);
+                breakButton.setVisibility(View.GONE);
             }
         }.start();
 
@@ -195,24 +227,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
-    private void resetTimer() {
-        if (timer != null) {
-            timer.cancel();
-        }
-        isBreak = false;
-        isTimerRunning = false;
-        timeLeftInMillis = 25 * 60 * 1000;
-        updateTimerText();
-    }
-
     private void updateTimerText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
         String timeFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timerText.setText(timeFormatted);
     }
-
-
-
 }
