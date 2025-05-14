@@ -31,17 +31,31 @@
         <!-- Button Layout -->
 
         <TextView
+            android:id="@+id/welcome_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Welcome!"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+
+        <TextView
             android:id="@+id/timer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
             android:text="@string/_25_00"
             android:textColor="@android:color/black"
             android:textSize="48sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar2" />
+            app:layout_constraintTop_toBottomOf="@+id/welcome_text" />
 
         <LinearLayout
             android:id="@+id/button_layout"
@@ -57,8 +71,8 @@
                 android:id="@+id/start_pause_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/start"
-                android:backgroundTint="@color/dark_blue"/>
+                android:backgroundTint="@color/dark_blue"
+                android:text="@string/start" />
 
             <Button
                 android:id="@+id/reset_button"
@@ -66,14 +80,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/reset"
                 android:layout_marginStart="16dp"
-                android:backgroundTint="@color/dark_blue"/>
+                android:backgroundTint="@color/dark_blue"
+                android:visibility="gone" />
+
             <Button
                 android:id="@+id/skip_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Skip"
                 android:layout_marginStart="16dp"
-                android:backgroundTint="@color/dark_blue" />
+                android:backgroundTint="@color/dark_blue"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -86,18 +103,32 @@
             android:text="@string/break_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/button_layout"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/pomodoro_count_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="24dp"
             android:text="@string/pomodoros_completed_0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/break_button" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="Settings"
+            android:src="@drawable/ic_settings"
+            app:backgroundTint="@color/blue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
