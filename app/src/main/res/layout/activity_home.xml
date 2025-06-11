@@ -59,55 +59,75 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_text" />
 
-        <LinearLayout
-            android:id="@+id/button_layout"
+        <FrameLayout
+            android:id="@+id/timer_button_frame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timer_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/timer_text">
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <Button
-                android:id="@+id/start_pause_button"
+            <LinearLayout
+                android:id="@+id/button_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/dark_blue"
-                android:text="@string/start" />
+                android:orientation="horizontal"
+                android:visibility="visible">
 
-            <Button
-                android:id="@+id/reset_button"
+                <Button
+                    android:id="@+id/start_pause_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/dark_blue"
+                    android:text="@string/start" />
+
+                <Button
+                    android:id="@+id/reset_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reset"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/dark_blue"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/skip_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Skip"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/dark_blue"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/break_buttons_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/dark_blue"
-                android:text="@string/reset"
-                android:visibility="gone" />
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-            <Button
-                android:id="@+id/skip_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/dark_blue"
-                android:text="Skip"
-                android:visibility="gone" />
+                <Button
+                    android:id="@+id/break_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pause Break"
+                    android:backgroundTint="@color/dark_blue" />
 
-        </LinearLayout>
+                <Space
+                    android:layout_width="16dp"
+                    android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/break_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/dark_blue"
-            android:text="@string/break_button"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_layout" />
+                <Button
+                    android:id="@+id/skip_break_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Skip Break"
+                    android:backgroundTint="@color/dark_blue" />
+            </LinearLayout>
 
+        </FrameLayout>
         <TextView
             android:id="@+id/pomodoro_count_text"
             android:layout_width="wrap_content"
@@ -117,7 +137,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/break_button" />
+            app:layout_constraintTop_toBottomOf="@+id/timer_button_frame" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/settings_button"
