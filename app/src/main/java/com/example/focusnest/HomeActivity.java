@@ -55,11 +55,10 @@ public class HomeActivity extends AppCompatActivity {
 
 
         // Get the extras
-        String name = getIntent().getStringExtra("user_name");
-        String profile = getIntent().getStringExtra("selected_profile");
+        User selectedUser = (User) getIntent().getSerializableExtra("selected_user");
 
         // Build welcome message
-        String welcomeMessage = "Hello " + name + "!\nYou have chosen the profile \"" + profile + "\".";
+        String welcomeMessage = "You have chosen the profile \"" + selectedUser.getName() + "\".";
 
         // Set to TextView
         TextView welcomeText = findViewById(R.id.welcome_text); // Make sure this ID exists in XML
@@ -234,8 +233,8 @@ public class HomeActivity extends AppCompatActivity {
 
             // Start statsActivity
             Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
-            intent.putExtra("user_name", name);
-            intent.putExtra("selected_profile", profile);
+           // intent.putExtra("user_name", name);
+           // intent.putExtra("selected_profile", profile);
             startActivity(intent);
             //finish();
         });

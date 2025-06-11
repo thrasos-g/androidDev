@@ -1,6 +1,7 @@
 package com.example.focusnest;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Spinner profileSpinner = findViewById(R.id.profile_spinner);
-        List<Profile> profiles = ProfileManager.getInstance(this).getAllProfiles();
+        MyDBHandler dbHandler = new MyDBHandler(this,null,null,1);
 
-        ArrayAdapter<Profile> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,profiles);
+        //Put saved users in spinner
+        Spinner profileSpinner = findViewById(R.id.profile_spinner);
+        List<User> users = dbHandler.getAllUsers();
+
+        ArrayAdapter<User> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,users);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         profileSpinner.setAdapter(adapter);
 
@@ -52,28 +57,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void nextActivity(View view) {
-        EditText nameInput = findViewById(R.id.editTextText);
+
         Spinner profileSpinner = findViewById(R.id.profile_spinner);
 
-        String userName = nameInput.getText().toString().trim();
-        String selectedProfile = profileSpinner.getSelectedItem().toString();
 
-        if (!userName.isEmpty()) {
-            // Save name (optional)
-            getSharedPreferences("FocusNestPrefs", MODE_PRIVATE)
-                    .edit()
-                    .putString("user_name", userName)
-                    .apply();
+        User selectedUser = (User)profileSpinner.getSelectedItem();
 
-            // Start HomeActivity with data
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            intent.putExtra("user_name", userName);
-            intent.putExtra("selected_profile", selectedProfile);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
-        }
+        // Start HomeActivity with data
+        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+        intent.putExtra("selected_user",(Serializable) selectedUser);
+        startActivity(intent);
+        finish();
     }
 
 }

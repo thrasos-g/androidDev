@@ -1,6 +1,8 @@
 package com.example.focusnest;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private int _id;
 
     private String name;
@@ -125,4 +127,8 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String toString(){return name;}
+
+    private static final long serialVersionUID = 1L;
 }
