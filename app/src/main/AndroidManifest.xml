@@ -13,6 +13,10 @@
         android:theme="@style/Theme.FocusNest"
         tools:targetApi="31">
         <activity
+            android:name=".StatsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FocusNest" />
+        <activity
             android:name=".CreateProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.FocusNest" />

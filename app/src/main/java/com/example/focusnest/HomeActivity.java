@@ -1,5 +1,6 @@
 package com.example.focusnest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -175,7 +176,26 @@ public class HomeActivity extends AppCompatActivity {
             // open settings screen
             // Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
             // startActivity(intent);
+
+
+
         });
+
+        FloatingActionButton statsButton = findViewById(R.id.stats_button);
+
+        statsButton.setOnClickListener(v -> {
+
+            // Start statsActivity
+            Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
+            intent.putExtra("user_name", name);
+            intent.putExtra("selected_profile", profile);
+            startActivity(intent);
+            //finish();
+
+
+        });
+
+
 
     }
 
