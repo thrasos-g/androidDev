@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import kotlin.collections.ArrayDeque;
 
@@ -18,7 +21,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "userDB.db";
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_ID = "_id", NAME = "name", STUDYTIME = "studyTime", BREAKSMALL = "breakSmall", BREAKLARGE = "breakLarge", ALARM = "alarm", DONOTDISTURB = "doNotDisturb";
-    public static final String STREAK = "steak", POMODOROSCOMPLETED = "pomodorosCompleted", POMODOROCYCLESCOMPLETED = "pomodoroCyclesCompleted", TOTALSTUDYSECONDS = "totalStudySeconds", TOTALBREAKSECONDS = "totalBreakSeconds";
+    public static final String LASTLOGIN="lastLoginDate",STREAK = "steak", POMODOROSCOMPLETED = "pomodorosCompleted", POMODOROCYCLESCOMPLETED = "pomodoroCyclesCompleted", TOTALSTUDYSECONDS = "totalStudySeconds", TOTALBREAKSECONDS = "totalBreakSeconds";
 
     //Constructor
     public MyDBHandler(Context context, String name,
@@ -39,6 +42,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 ALARM + " INTEGER," +
                 DONOTDISTURB + " INTEGER," +
 
+                LASTLOGIN + " TEXT," +
                 STREAK + " INTEGER," +
                 POMODOROSCOMPLETED + " INTEGER," +
                 POMODOROCYCLESCOMPLETED + " INTEGER," +
@@ -47,6 +51,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_USERS_TABLE);
 
         // Insert default users only once, on DB creation
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String today = sdf.format(new Date());
+
         ContentValues casual = new ContentValues();
         casual.put(NAME, "Casual");
         casual.put(STUDYTIME, 25);
@@ -54,7 +61,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
         casual.put(BREAKLARGE, 15);
         casual.put(ALARM, 0);
         casual.put(DONOTDISTURB, 0);
-        casual.put(STREAK, 0);
+        casual.put(LASTLOGIN, today);
+        casual.put(STREAK, 1);
         casual.put(POMODOROSCOMPLETED, 0);
         casual.put(POMODOROCYCLESCOMPLETED, 0);
         casual.put(TOTALSTUDYSECONDS, 0);
@@ -68,7 +76,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
         tryhard.put(BREAKLARGE, 10);
         tryhard.put(ALARM, 1);
         tryhard.put(DONOTDISTURB, 1);
-        tryhard.put(STREAK, 0);
+        casual.put(LASTLOGIN, today);
+        tryhard.put(STREAK, 1);
         tryhard.put(POMODOROSCOMPLETED, 0);
         tryhard.put(POMODOROCYCLESCOMPLETED, 0);
         tryhard.put(TOTALSTUDYSECONDS, 0);
@@ -85,7 +94,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
 
     //Μέθοδος για προσθήκη ενός user στη ΒΔ
-    public void addProduct(User user) {
+    public void addUser(User user) {
         ContentValues values = new ContentValues();
         values.put(NAME, user.getName());
         values.put(STUDYTIME, user.getStudyTime());
@@ -93,6 +102,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         values.put(BREAKLARGE, user.getBreakLarge());
         values.put(ALARM, user.getAlarm());
         values.put(DONOTDISTURB, user.getDoNotDisturb());
+        values.put(LASTLOGIN,user.getLastLoginDate());
         values.put(STREAK, user.getStreak());
         values.put(POMODOROSCOMPLETED, user.getPomodorosCompleted());
         values.put(POMODOROCYCLESCOMPLETED, user.getPomodoroCyclesCompleted());
@@ -124,11 +134,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
             user.setAlarm(Integer.parseInt(cursor.getString(5)));
             user.setDoNotDisturb(Integer.parseInt(cursor.getString(6)));
 
-            user.setStreak(Integer.parseInt(cursor.getString(7)));
-            user.setPomodorosCompleted(Integer.parseInt(cursor.getString(8)));
-            user.setPomodoroCyclesCompleted(Integer.parseInt(cursor.getString(9)));
-            user.setTotalStudySeconds(Integer.parseInt(cursor.getString(10)));
-            user.setTotalBreakSeconds(Integer.parseInt(cursor.getString(11)));
+            user.setLastLoginDate(cursor.getString(7));
+            user.setStreak(cursor.getInt(8));
+            user.setPomodorosCompleted(cursor.getInt(9));
+            user.setPomodoroCyclesCompleted(cursor.getInt(10));
+            user.setTotalStudySeconds(cursor.getInt(11));
+            user.setTotalBreakSeconds(cursor.getInt(12));
 
             cursor.close();
         } else {
@@ -169,11 +180,12 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 user.setAlarm(cursor.getInt(5));
                 user.setDoNotDisturb(cursor.getInt(6));
 
-                user.setStreak(cursor.getInt(7));
-                user.setPomodorosCompleted(cursor.getInt(8));
-                user.setPomodoroCyclesCompleted(cursor.getInt(9));
-                user.setTotalStudySeconds(cursor.getInt(10));
-                user.setTotalBreakSeconds(cursor.getInt(11));
+                user.setLastLoginDate(cursor.getString(7));
+                user.setStreak(cursor.getInt(8));
+                user.setPomodorosCompleted(cursor.getInt(9));
+                user.setPomodoroCyclesCompleted(cursor.getInt(10));
+                user.setTotalStudySeconds(cursor.getInt(11));
+                user.setTotalBreakSeconds(cursor.getInt(12));
 
                 userList.add(user);
             } while (cursor.moveToNext());
@@ -183,5 +195,28 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
         return userList;
 
+    }
+
+    public void updateUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(NAME, user.getName());
+        values.put(STUDYTIME, user.getStudyTime());
+        values.put(BREAKSMALL, user.getBreakSmall());
+        values.put(BREAKLARGE, user.getBreakLarge());
+        values.put(ALARM, user.getAlarm());
+        values.put(DONOTDISTURB, user.getDoNotDisturb());
+
+        values.put(LASTLOGIN, user.getLastLoginDate());
+        values.put(STREAK, user.getStreak());
+        values.put(POMODOROSCOMPLETED, user.getPomodorosCompleted());
+        values.put(POMODOROCYCLESCOMPLETED, user.getPomodoroCyclesCompleted());
+        values.put(TOTALSTUDYSECONDS, user.getTotalStudySeconds());
+        values.put(TOTALBREAKSECONDS, user.getTotalBreakSeconds());
+
+
+        db.update(TABLE_USERS, values, "_id = ?", new String[]{String.valueOf(user.get_id())});
+        db.close();
     }
 }

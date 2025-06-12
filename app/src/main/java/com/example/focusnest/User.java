@@ -13,9 +13,11 @@ public class User implements Serializable {
     //Stats
     private int streak,pomodorosCompleted,pomodoroCyclesCompleted,totalStudySeconds,totalBreakSeconds;
 
+    private String lastLoginDate; // format: "yyyy-MM-dd"
+
     public User(){}
-    public User(int id, String name){
-        _id=id;
+    public User(String name){
+        _id=0;//the Db will change it automatically
         this.name = name;
         //default values
         studyTime=15*60;
@@ -29,6 +31,7 @@ public class User implements Serializable {
         pomodoroCyclesCompleted=0;
         totalStudySeconds=0;
         totalBreakSeconds=0;
+        lastLoginDate=null;
     }
 
 //  set/get
@@ -130,5 +133,19 @@ public class User implements Serializable {
 
     public String toString(){return name;}
 
+    public String getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(String lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
     private static final long serialVersionUID = 1L;
 }
+
+
+
+
+
+

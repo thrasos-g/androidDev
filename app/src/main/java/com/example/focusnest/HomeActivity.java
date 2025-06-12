@@ -3,6 +3,7 @@ package com.example.focusnest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
@@ -27,6 +29,12 @@ public class HomeActivity extends AppCompatActivity {
     private boolean isBreak = false;
     private boolean isPaused = false;
     private int pomodoroCount = 0;
+
+    private long pomodoroStartTime = 0; // in milliseconds
+    private long breakStartTime = 0; // set when a break begins
+
+
+    private User selectedUser;
 
     private long timeLeftInMillis = 25 * 60 * 1000; // 25 minutes
 
@@ -55,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
         // Get the extras
-        User selectedUser = (User) getIntent().getSerializableExtra("selected_user");
+        selectedUser = (User) getIntent().getSerializableExtra("selected_user");
 
         // Build welcome message
         String welcomeMessage = "You have chosen the profile \"" + selectedUser.getName() + "\".";
@@ -135,6 +143,10 @@ public class HomeActivity extends AppCompatActivity {
                 if (timer != null) timer.cancel(); // Cancel current timer
                 isBreak = true; // Set state to break
                 isPaused = false; // Ensure it's not paused when starting break
+
+                //start counting break time
+                breakStartTime = System.currentTimeMillis(); // record break start
+
                 // Determine break duration (long break every 4 pomodoros)
                 timeLeftInMillis = (pomodoroCount != 0 && pomodoroCount % 4 == 0) ?
                         15 * 60 * 1000 : 5 * 60 * 1000;
@@ -171,7 +183,24 @@ public class HomeActivity extends AppCompatActivity {
 
             if (timer != null) timer.cancel(); // Stop current pomodoro timer
 
+            //start counting break seconds
+            breakStartTime = System.currentTimeMillis(); // record break start
+
+
+            //increments total study time
+            if (pomodoroStartTime > 0) {
+                int elapsed = (int)((System.currentTimeMillis() - pomodoroStartTime) / 1000);
+                selectedUser.setTotalStudySeconds(selectedUser.getTotalStudySeconds()+elapsed);
+            }
+
             pomodoroCount++; // Increment pomodoro count as it's being skipped/completed
+            selectedUser.setPomodorosCompleted(selectedUser.getPomodorosCompleted()+1);//++pomodoros complete for stats
+
+            //check it see if pomodoro cycles need to be incremented as well
+            if (pomodoroCount != 0 && pomodoroCount % 4 == 0){
+                selectedUser.setPomodoroCyclesCompleted(selectedUser.getPomodoroCyclesCompleted()+1);
+            }
+
             pomodoroCountText.setText("Pomodoros: " + pomodoroCount); // Update UI
 
             isBreak = true; // Set state to break
@@ -196,6 +225,13 @@ public class HomeActivity extends AppCompatActivity {
         skipBreakButton.setOnClickListener(v -> {
             // This button allows skipping the current break session.
             if (timer != null) timer.cancel(); // Stop current break timer
+
+
+            if (breakStartTime > 0) {
+                int elapsed = (int)((System.currentTimeMillis() - breakStartTime) / 1000);
+                selectedUser.setTotalBreakSeconds(selectedUser.getTotalBreakSeconds()+elapsed);
+                breakStartTime = 0;
+            }
 
             isBreak = false; // No longer in break
             isPaused = false; // Not paused
@@ -233,15 +269,23 @@ public class HomeActivity extends AppCompatActivity {
 
             // Start statsActivity
             Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
-           // intent.putExtra("user_name", name);
-           // intent.putExtra("selected_profile", profile);
+            intent.putExtra("selected_user",(Serializable) selectedUser);
             startActivity(intent);
             //finish();
         });
     }
 
     private void startTimer() {
+
+        if (!isBreak) {
+            pomodoroStartTime = System.currentTimeMillis(); // track actual start
+        }
+
         timer = new CountDownTimer(timeLeftInMillis, 1000) {
+
+
+
+
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
@@ -253,10 +297,25 @@ public class HomeActivity extends AppCompatActivity {
                 isTimerRunning = false;
 
                 if (!isBreak) {
+                    //updates total study time
+                    long endTime = System.currentTimeMillis();
+                    int elapsedSeconds = (int)((endTime - pomodoroStartTime) / 1000);
+                    selectedUser.setTotalStudySeconds(selectedUser.getStudyTime()+elapsedSeconds);
+
                     // Only increment pomodoro count if the completed session was a pomodoro, not a break.
                     pomodoroCount++;
                     pomodoroCountText.setText("Pomodoros: " + pomodoroCount);
                 }
+
+
+                if (isBreak && breakStartTime > 0) {
+                    long endTime = System.currentTimeMillis();
+                    int breakElapsed = (int)((endTime - breakStartTime) / 1000);
+                    selectedUser.setTotalBreakSeconds(selectedUser.getTotalBreakSeconds()+breakElapsed);
+                    breakStartTime = 0;
+                }
+
+
 
                 // After timer finishes (either pomodoro or break), reset to pomodoro state.
                 isBreak = false; // Not in break anymore
@@ -280,9 +339,26 @@ public class HomeActivity extends AppCompatActivity {
 
     private void pauseTimer() {
         if (timer != null) {
+
+            if (isBreak && breakStartTime > 0) {
+                long now = System.currentTimeMillis();
+                int breakElapsed = (int)((now - breakStartTime) / 1000);
+                selectedUser.setTotalBreakSeconds(selectedUser.getTotalBreakSeconds()+breakElapsed);
+                breakStartTime = 0;
+
+            }
+
             timer.cancel(); // Cancel the timer
             isTimerRunning = false; // Set running state to false
             isPaused = true; // Indicate that it's paused
+
+            if (!isBreak && pomodoroStartTime > 0) {
+                long now = System.currentTimeMillis();
+                int elapsed = (int) ((now - pomodoroStartTime) / 1000); // seconds
+                selectedUser.setTotalStudySeconds(selectedUser.getTotalStudySeconds()+elapsed);
+                pomodoroStartTime = 0; // reset for next session
+
+            }
         }
     }
 
@@ -292,4 +368,18 @@ public class HomeActivity extends AppCompatActivity {
         String timeFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timerText.setText(timeFormatted);
     }
+
+    //save the changes done to the DB
+    protected void onPause() {
+        super.onPause();
+        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
+        dbHandler.updateUser(selectedUser);
+    }
+
+    protected void onStop() {
+        super.onStop();
+        MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
+        dbHandler.updateUser(selectedUser);
+    }
 }
+

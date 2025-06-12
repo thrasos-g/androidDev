@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Focus Nest</string>
     <string name="welcome_to_focus_nest">Welcome to Focus Nest!</string>
-    <string name="please_enter_your_name_below">Please enter your name and choose your profile below:</string>
+    <string name="please_enter_your_name_below">Please choose your profile below:</string>
     <string name="name">Name</string>
     <string name="next">Next</string>
     <string name="start">Start</string>

@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class StatsActivity extends AppCompatActivity {
 
-    TextView steak,time,comp,pcc,tbt;
+    TextView steak,time,comp,pcc,tbt,statsfor;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +24,7 @@ public class StatsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        String name = getIntent().getStringExtra("user_name");
-        String profile = getIntent().getStringExtra("selected_profile");
-        User user=new User(10,"test");
+        User user = (User) getIntent().getSerializableExtra("selected_user");
 
 
         //UI stuff
@@ -35,12 +33,14 @@ public class StatsActivity extends AppCompatActivity {
         comp=findViewById(R.id.comp);
         pcc=findViewById(R.id.pcc);
         tbt=findViewById(R.id.tbt);
+        statsfor=findViewById(R.id.statsfor);
 
         steak.setText(String.valueOf(user.getStreak()));
         time.setText(format(user.getTotalStudySeconds()));
         comp.setText(String.valueOf(user.getPomodorosCompleted()));
         pcc.setText(String.valueOf(user.getPomodoroCyclesCompleted()));
         tbt.setText(format(user.getTotalBreakSeconds()));
+        statsfor.setText("Statistics of user \""+user.getName()+"\"");
 
     }
 

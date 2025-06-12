@@ -20,17 +20,21 @@ public class CreateProfileActivity extends AppCompatActivity {
         profileNameInput = findViewById(R.id.profile_name_input);
         Button saveButton = findViewById(R.id.save_profile_button);
 
+
+        MyDBHandler dbHandler=new MyDBHandler(this,null,null,1);
+
         saveButton.setOnClickListener(v -> {
             String name = profileNameInput.getText().toString().trim();
             if (!name.isEmpty()) {
-                // For now: save to mock list in ProfileManager
-                ProfileManager.getInstance(this).addMockProfile(name);
-
-                Toast.makeText(this, "Profile saved!", Toast.LENGTH_SHORT).show();
+                User user= new User(name);
+                dbHandler.addUser(user);
+                Toast.makeText(this, "User saved!", Toast.LENGTH_SHORT).show();
                 finish(); // Go back to main screen
             } else {
                 Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 }
