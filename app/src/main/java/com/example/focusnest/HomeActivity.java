@@ -259,8 +259,9 @@ public class HomeActivity extends AppCompatActivity {
 
             // Start the SettingsActivity
             // open settings screen
-            // Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-            // startActivity(intent);
+             Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+             intent.putExtra("selected_user",(Serializable) selectedUser);
+             startActivity(intent);
         });
 
         FloatingActionButton statsButton = findViewById(R.id.stats_button);
@@ -268,9 +269,9 @@ public class HomeActivity extends AppCompatActivity {
         statsButton.setOnClickListener(v -> {
 
             // Start statsActivity
-            Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
-            intent.putExtra("selected_user",(Serializable) selectedUser);
-            startActivity(intent);
+             Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
+             intent.putExtra("selected_user",(Serializable) selectedUser);
+             startActivity(intent);
             //finish();
         });
     }

@@ -56,9 +56,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         ContentValues casual = new ContentValues();
         casual.put(NAME, "Casual");
-        casual.put(STUDYTIME, 25);
-        casual.put(BREAKSMALL, 5);
-        casual.put(BREAKLARGE, 15);
+        casual.put(STUDYTIME, 25*60);
+        casual.put(BREAKSMALL, 5*60);
+        casual.put(BREAKLARGE, 15*60);
         casual.put(ALARM, 0);
         casual.put(DONOTDISTURB, 0);
         casual.put(LASTLOGIN, today);
@@ -71,9 +71,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         ContentValues tryhard = new ContentValues();
         tryhard.put(NAME, "Tryhard");
-        tryhard.put(STUDYTIME, 45);
-        tryhard.put(BREAKSMALL, 3);
-        tryhard.put(BREAKLARGE, 10);
+        tryhard.put(STUDYTIME, 45*60);
+        tryhard.put(BREAKSMALL, 3*60);
+        tryhard.put(BREAKLARGE, 10*60);
         tryhard.put(ALARM, 1);
         tryhard.put(DONOTDISTURB, 1);
         casual.put(LASTLOGIN, today);
