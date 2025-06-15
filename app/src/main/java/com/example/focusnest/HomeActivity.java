@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,7 +38,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private User selectedUser;
 
-    private long timeLeftInMillis = 25 * 60 * 1000; // 25 minutes
+    private long timeLeftInMillis;
+    private ActivityResultLauncher<Intent> settingsLauncher;
+
 
     // Declare the break buttons container
     private View breakButtonsContainer;
@@ -58,12 +62,35 @@ public class HomeActivity extends AppCompatActivity {
         breakButton = findViewById(R.id.break_button);
         skipButton = findViewById(R.id.skip_button);
         skipBreakButton = findViewById(R.id.skip_break_button);
+
         // Initialize the break buttons container
         breakButtonsContainer = findViewById(R.id.break_buttons_container);
 
 
         // Get the extras
         selectedUser = (User) getIntent().getSerializableExtra("selected_user");
+        //Handle DND
+        if(selectedUser.getDoNotDisturb()==1){
+            DoNotDisturbHelper.setDoNotDisturb(this, true);
+            Log.d("USER_OBJECT", "dnd:true");
+        }else{
+            DoNotDisturbHelper.setDoNotDisturb(this, false);
+            Log.d("USER_OBJECT", "dnd:false");
+        }
+
+
+        if (getIntent().hasExtra("pomodoro_count")) {
+
+            pomodoroCount=(int) getIntent().getSerializableExtra("pomodoro_count");
+            Log.d("USER_OBJECT", "count pomodoro= "+pomodoroCount);
+            pomodoroCountText.setText("Pomodoros Completed: " + pomodoroCount);
+        }
+
+
+
+        timeLeftInMillis = selectedUser.getStudyTime() * 1000;
+
+        timerText.setText(formatTime(selectedUser.getStudyTime()));
 
         // Build welcome message
         String welcomeMessage = "You have chosen the profile \"" + selectedUser.getName() + "\".";
@@ -71,6 +98,28 @@ public class HomeActivity extends AppCompatActivity {
         // Set to TextView
         TextView welcomeText = findViewById(R.id.welcome_text); // Make sure this ID exists in XML
         welcomeText.setText(welcomeMessage);
+
+        //register launcher
+        settingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        User returnedUser = (User) result.getData().getSerializableExtra("selected_user");
+                        if (returnedUser != null) {
+                            selectedUser = returnedUser;
+                            Log.d("USER_OBJECT", "Got updated user");
+
+                            Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+                            intent.putExtra("selected_user",selectedUser);
+                            intent.putExtra("pomodoro_count",pomodoroCount);
+                            finish();                    // finish current instance
+                            startActivity(intent);
+                        }
+                    }
+                }
+        );
+
+
 
         // Initial button visibility
         startPauseButton.setVisibility(View.VISIBLE);
@@ -85,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
                 // If currently in a break, and start/pause is clicked, it means we want to end the break and start a pomodoro
                 if (timer != null) timer.cancel();
                 isBreak = false; // No longer in break
-                timeLeftInMillis = 25 * 60 * 1000; // Reset to 25 minutes pomodoro
+                timeLeftInMillis = selectedUser.getStudyTime() * 1000;
                 updateTimerText();
                 startTimer(); // Start the pomodoro timer
 
@@ -123,7 +172,7 @@ public class HomeActivity extends AppCompatActivity {
             isBreak = false;
 
             // Reset timer duration to default pomodoro
-            timeLeftInMillis = 25 * 60 * 1000;
+            timeLeftInMillis = selectedUser.getStudyTime() * 1000;
             updateTimerText(); // Update UI
 
             startPauseButton.setText("Start"); // Reset start/pause button text
@@ -149,7 +198,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 // Determine break duration (long break every 4 pomodoros)
                 timeLeftInMillis = (pomodoroCount != 0 && pomodoroCount % 4 == 0) ?
-                        15 * 60 * 1000 : 5 * 60 * 1000;
+                        selectedUser.getBreakLarge() * 1000 : selectedUser.getBreakSmall() * 1000;
 
                 updateTimerText(); // Update UI with break time
                 startTimer(); // Start the break timer
@@ -206,7 +255,7 @@ public class HomeActivity extends AppCompatActivity {
             isBreak = true; // Set state to break
             isPaused = false; // Ensure not paused when starting break
             // Determine break duration
-            timeLeftInMillis = (pomodoroCount % 4 == 0) ? 15 * 60 * 1000 : 5 * 60 * 1000;
+            timeLeftInMillis = (pomodoroCount % 4 == 0) ? selectedUser.getBreakLarge() * 1000 : selectedUser.getBreakSmall() * 1000;
 
             updateTimerText(); // Update UI with break time
             startTimer(); // Start the break timer
@@ -237,8 +286,8 @@ public class HomeActivity extends AppCompatActivity {
             isPaused = false; // Not paused
             isTimerRunning = false; // Not running
 
-            // Reset timer to 25 minutes (Pomodoro) for the next session
-            timeLeftInMillis = 25 * 60 * 1000;
+            // Reset timer
+            timeLeftInMillis = selectedUser.getStudyTime() * 1000;
             updateTimerText(); // Update UI
 
             // Adjust button visibility to show only Start button, preparing for a new pomodoro
@@ -254,14 +303,13 @@ public class HomeActivity extends AppCompatActivity {
         FloatingActionButton settingsButton = findViewById(R.id.settings_button);
 
         settingsButton.setOnClickListener(v -> {
-            //temp
-            Toast.makeText(HomeActivity.this, "Settings clicked", Toast.LENGTH_SHORT).show();
+
 
             // Start the SettingsActivity
             // open settings screen
-             Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-             intent.putExtra("selected_user",(Serializable) selectedUser);
-             startActivity(intent);
+            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+            intent.putExtra("selected_user", selectedUser);
+            settingsLauncher.launch(intent);
         });
 
         FloatingActionButton statsButton = findViewById(R.id.stats_button);
@@ -272,7 +320,7 @@ public class HomeActivity extends AppCompatActivity {
              Intent intent = new Intent(HomeActivity.this, StatsActivity.class);
              intent.putExtra("selected_user",(Serializable) selectedUser);
              startActivity(intent);
-            //finish();
+
         });
     }
 
@@ -305,7 +353,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     // Only increment pomodoro count if the completed session was a pomodoro, not a break.
                     pomodoroCount++;
-                    pomodoroCountText.setText("Pomodoros: " + pomodoroCount);
+                    pomodoroCountText.setText("Pomodoros Completed: " + pomodoroCount);
                 }
 
 
@@ -320,7 +368,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 // After timer finishes (either pomodoro or break), reset to pomodoro state.
                 isBreak = false; // Not in break anymore
-                timeLeftInMillis = 25 * 60 * 1000; // Reset to 25 minutes pomodoro
+                timeLeftInMillis = selectedUser.getStudyTime() * 1000; // Reset
                 updateTimerText(); // Update UI
 
                 startPauseButton.setText("Start"); // Reset button text
@@ -382,5 +430,23 @@ public class HomeActivity extends AppCompatActivity {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         dbHandler.updateUser(selectedUser);
     }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        // Called when activity is finishing or being killed
+        Log.d("DEBUG", "Activity is closing. Do cleanup here.");
+
+        DoNotDisturbHelper.setDoNotDisturb(this, false);//close DND
+        Log.d("USER_OBJECT", "onDestroy dnd:false");
+
+    }
+
+    public static String formatTime(int totalSeconds) {
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
+
 }
 
