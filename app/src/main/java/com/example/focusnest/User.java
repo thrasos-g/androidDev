@@ -20,7 +20,7 @@ public class User implements Serializable {
         _id=0;//the Db will change it automatically
         this.name = name;
         //default values
-        studyTime=15*60;
+        studyTime=25*60;
         breakSmall=5*60;
         breakLarge=15*60;
         alarm=1;//true

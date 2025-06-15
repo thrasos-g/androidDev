@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     private CountDownTimer timer;
     private boolean isTimerRunning = false;
     private boolean isBreak = false;
-    private boolean isPaused = false;
+    private boolean isPaused, isRestarting = false;;
     private int pomodoroCount = 0;
 
     private long pomodoroStartTime = 0; // in milliseconds
@@ -108,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
                         if (returnedUser != null) {
                             selectedUser = returnedUser;
                             Log.d("USER_OBJECT", "Got updated user");
-
+                            isRestarting = true;
                             Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
                             intent.putExtra("selected_user",selectedUser);
                             intent.putExtra("pomodoro_count",pomodoroCount);
@@ -250,7 +250,7 @@ public class HomeActivity extends AppCompatActivity {
                 selectedUser.setPomodoroCyclesCompleted(selectedUser.getPomodoroCyclesCompleted()+1);
             }
 
-            pomodoroCountText.setText("Pomodoros: " + pomodoroCount); // Update UI
+            pomodoroCountText.setText("Pomodoros completed: " + pomodoroCount); // Update UI
 
             isBreak = true; // Set state to break
             isPaused = false; // Ensure not paused when starting break
@@ -435,9 +435,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onDestroy();
         // Called when activity is finishing or being killed
         Log.d("DEBUG", "Activity is closing. Do cleanup here.");
+        if (!isRestarting) {
+            DoNotDisturbHelper.setDoNotDisturb(this, false);//close DND
+            Log.d("USER_OBJECT", "onDestroy dnd:false");
+        }
 
-        DoNotDisturbHelper.setDoNotDisturb(this, false);//close DND
-        Log.d("USER_OBJECT", "onDestroy dnd:false");
 
     }
 

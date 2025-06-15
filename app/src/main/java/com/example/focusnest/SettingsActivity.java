@@ -158,5 +158,19 @@ public class SettingsActivity extends AppCompatActivity {
         }
         return Integer.parseInt(input);
     }
+    //request permission to listen
+    private void requestNotificationListenerPermission() {
+        if (!isNotificationServiceEnabled()) {
+            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            startActivity(intent);
+        }
+    }
+
+    private boolean isNotificationServiceEnabled() {
+        String packageName = getPackageName();
+        String flat = Settings.Secure.getString(getContentResolver(),
+                "enabled_notification_listeners");
+        return flat != null && flat.contains(packageName);
+    }
 }
 

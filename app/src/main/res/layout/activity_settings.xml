@@ -5,11 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
    <androidx.constraintlayout.widget.ConstraintLayout
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:backgroundTint="#2196F3"
+       android:layout_height="wrap_content" android:backgroundTint="#2196F3"
        tools:context=".SettingsActivity">
 
       <androidx.appcompat.widget.Toolbar
@@ -26,147 +24,19 @@
           app:title="Profile Settings"
           app:titleTextColor="#FFFFFF" />
 
-      <Switch
-          android:id="@+id/switch1"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="16dp"
-          android:layout_marginEnd="87dp"
-          android:scaleX="1.5"
-          android:scaleY="1.5"
-          app:layout_constraintBaseline_toBaselineOf="@+id/alarm_text"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/alarm_text"
-          tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-      <EditText
-          android:id="@+id/seconds_small"
-          android:layout_width="0dp"
-          android:layout_height="50dp"
-          android:inputType="number"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/minutes_small"
-          app:layout_constraintTop_toBottomOf="@+id/setSmall"
-          tools:hint="0" />
-
-      <EditText
-          android:id="@+id/minutes_small"
-          android:layout_width="0dp"
-          android:layout_height="50dp"
-          android:ems="10"
-          android:inputType="number"
-          app:layout_constraintEnd_toStartOf="@+id/seconds_small"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/setSmall"
-          tools:hint="0" />
-
       <TextView
-          android:id="@+id/alarm_text"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="64dp"
-          android:layout_marginTop="32dp"
-          android:layout_marginEnd="16dp"
-          android:text="Do Not Disturb(Off/On)"
-          android:textSize="20sp"
-          android:textStyle="bold"
-          app:layout_constraintBottom_toTopOf="@+id/Set"
-          app:layout_constraintEnd_toStartOf="@+id/switch1"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/seconds_big"
-          app:layout_constraintVertical_bias="0.658" />
-
-      <ImageView
-          android:id="@+id/focusnest"
+          android:id="@+id/setStudy"
           android:layout_width="0dp"
-          android:layout_height="57dp"
-          android:layout_marginStart="161dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
           android:layout_marginTop="28dp"
-          android:layout_marginEnd="159dp"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/Set"
-          app:srcCompat="@drawable/focus_nest_logo" />
-
-      <TextView
-          android:id="@+id/setSmall"
-          android:layout_width="0dp"
-          android:layout_height="45dp"
-          android:layout_marginStart="97dp"
-          android:layout_marginEnd="97dp"
-          android:layout_marginBottom="288dp"
-          android:text="Set Small Brake :"
-          android:textSize="28sp"
-          android:textStyle="bold"
-          app:layout_constraintBottom_toTopOf="@+id/Set"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
-          app:layout_constraintStart_toStartOf="parent" />
-
-      <TextView
-          android:id="@+id/setBig"
-          android:layout_width="0dp"
-          android:layout_height="61dp"
-          android:layout_marginStart="95dp"
-          android:layout_marginTop="56dp"
-          android:layout_marginEnd="130dp"
-          android:text="Set Big Brake :"
-          android:textSize="28sp"
+          android:layout_marginEnd="24dp"
+          android:text="Set Study Time :"
+          android:textSize="26sp"
           android:textStyle="bold"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/seconds_study" />
-
-      <EditText
-          android:id="@+id/minutes_big"
-          android:layout_width="0dp"
-          android:layout_height="50dp"
-          android:ems="10"
-          android:inputType="number"
-          app:layout_constraintEnd_toStartOf="@+id/seconds_big"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/setBig"
-          tools:hint="0" />
-
-      <EditText
-          android:id="@+id/seconds_big"
-          android:layout_width="0dp"
-          android:layout_height="50dp"
-          android:ems="10"
-          android:inputType="number"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/minutes_big"
-          app:layout_constraintTop_toBottomOf="@+id/setBig"
-          tools:hint="0" />
-
-      <Button
-          android:id="@+id/Set"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="161dp"
-          android:layout_marginTop="504dp"
-          android:layout_marginEnd="162dp"
-          android:backgroundTint="@color/dark_blue"
-          android:text="Set"
-          android:scaleX="1.5"
-          android:scaleY="1.5"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="@+id/setBig" />
-
-      <EditText
-          android:id="@+id/seconds_study"
-          android:layout_width="0dp"
-          android:layout_height="50dp"
-          android:ems="10"
-          android:inputType="number"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toEndOf="@+id/minutes_study"
-          app:layout_constraintTop_toBottomOf="@+id/setStudy"
-          tools:hint="0" />
+          app:layout_constraintTop_toBottomOf="@+id/toolbar3" />
 
       <EditText
           android:id="@+id/minutes_study"
@@ -174,25 +44,148 @@
           android:layout_height="50dp"
           android:ems="10"
           android:inputType="number"
+          android:layout_marginStart="24dp"
+          android:layout_marginEnd="8dp"
           app:layout_constraintEnd_toStartOf="@+id/seconds_study"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/setStudy"
-          tools:hint="0" />
+          tools:hint="0 minutes" />
+
+      <EditText
+          android:id="@+id/seconds_study"
+          android:layout_width="0dp"
+          android:layout_height="50dp"
+          android:ems="10"
+          android:inputType="number"
+          android:layout_marginStart="8dp"
+          android:layout_marginEnd="24dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/minutes_study"
+          app:layout_constraintTop_toBottomOf="@+id/setStudy"
+          tools:hint="0 seconds" />
 
       <TextView
-          android:id="@+id/setStudy"
+          android:id="@+id/setSmall"
           android:layout_width="0dp"
-          android:layout_height="52dp"
-          android:layout_marginStart="95dp"
-          android:layout_marginTop="28dp"
-          android:layout_marginEnd="108dp"
-          android:text="Set Study Time :"
-          android:textSize="26sp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:layout_marginTop="32dp"
+          android:layout_marginEnd="24dp"
+          android:text="Set Small Brake :"
+          android:textSize="28sp"
           android:textStyle="bold"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.0"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/toolbar3" />
+          app:layout_constraintTop_toBottomOf="@+id/minutes_study" /> <EditText
+       android:id="@+id/minutes_small"
+       android:layout_width="0dp"
+       android:layout_height="50dp"
+       android:ems="10"
+       android:inputType="number"
+       android:layout_marginStart="24dp"
+       android:layout_marginEnd="8dp"
+       app:layout_constraintEnd_toStartOf="@+id/seconds_small"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/setSmall"
+       tools:hint="0 minutes" />
+
+      <EditText
+          android:id="@+id/seconds_small"
+          android:layout_width="0dp"
+          android:layout_height="50dp"
+          android:inputType="number"
+          android:layout_marginStart="8dp"
+          android:layout_marginEnd="24dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/minutes_small"
+          app:layout_constraintTop_toBottomOf="@+id/setSmall"
+          tools:hint="0 seconds" />
+
+      <TextView
+          android:id="@+id/setBig"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:layout_marginTop="32dp"
+          android:layout_marginEnd="24dp"
+          android:text="Set Big Brake :"
+          android:textSize="28sp"
+          android:textStyle="bold"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/minutes_small" /> <EditText
+       android:id="@+id/minutes_big"
+       android:layout_width="0dp"
+       android:layout_height="50dp"
+       android:ems="10"
+       android:inputType="number"
+       android:layout_marginStart="24dp"
+       android:layout_marginEnd="8dp"
+       app:layout_constraintEnd_toStartOf="@+id/seconds_big"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/setBig"
+       tools:hint="0 minutes" />
+
+      <EditText
+          android:id="@+id/seconds_big"
+          android:layout_width="0dp"
+          android:layout_height="50dp"
+          android:ems="10"
+          android:inputType="number"
+          android:layout_marginStart="8dp"
+          android:layout_marginEnd="24dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/minutes_big"
+          app:layout_constraintTop_toBottomOf="@+id/setBig"
+          tools:hint="0 seconds" />
+
+      <TextView
+          android:id="@+id/alarm_text"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:layout_marginTop="32dp"
+          android:text="Do Not Disturb(Off/On)"
+          android:textSize="20sp"
+          android:textStyle="bold"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/minutes_big" />
+
+      <Switch
+          android:id="@+id/switch1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="24dp"
+          android:scaleX="1.5"
+          android:scaleY="1.5"
+          app:layout_constraintBaseline_toBaselineOf="@+id/alarm_text"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/alarm_text"
+          tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+      <Button
+          android:id="@+id/Set"
+          android:layout_width="wrap_content" android:layout_height="wrap_content"
+          android:layout_marginTop="48dp" android:backgroundTint="@color/dark_blue"
+          android:text="Set"
+          android:scaleX="1.5"
+          android:scaleY="1.5"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/alarm_text" /> <ImageView
+       android:id="@+id/focusnest"
+       android:layout_width="0dp"
+       android:layout_height="57dp"
+       android:layout_marginStart="64dp"
+       android:layout_marginTop="32dp"
+       android:layout_marginEnd="64dp"
+       android:layout_marginBottom="32dp"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/Set"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:srcCompat="@drawable/focus_nest_logo" />
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
